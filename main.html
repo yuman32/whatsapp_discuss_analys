@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Read whatsapp history txt file</title>
+</head>
+
+<body>
+<input type="file" name="inputfile"
+       id="inputfile">
+<br>
+
+<pre id="userName"></pre>
+<pre id="TotalMessageSent"></pre>
+<br>
+<pre id="TotalMessageRecieve"></pre>
+<br>
+<pre id="lol_sent"></pre>
+<br>
+<pre id="lmao_sent"></pre>
+<br>
+<pre id="emoji_sent"></pre>
+<br>
+<pre id="fuck_merde_putain_ass_sent"></pre>
+<br>
+<pre id="emojy_recieve"></pre>
+<br>
+<pre id="angry_emoji_recieve"></pre>
+<br>
+
+<pre id="total_recieve_akpe_mane_..._"></pre>
+<br>
+
+<script type="text/javascript">
+
+
+    let messages = [];
+    let messages_sent = [];
+    let messages_recieve = [];
+    let username   = [];
+    let lol_sent   = [];
+    let lmao_sent  =[];
+    let emoji_sent = [];
+    let fuck_merde_putain_ass_sent = [] ;
+    let emoji_recieve = [];
+    let angry_emoji_recieve = [];
+    let amen_akpe_merci = [];
+    let emojiRegex =  /([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g;
+
+
+    document.getElementById('inputfile').addEventListener('change', function() {
+            init();
+            let that = this;
+             username = getUserName(that.files[0].name);
+            let fr = new FileReader();
+            fr.onload = function() {
+                processMessages(fr.result.split('\n'),function () {
+                    console.log(messages.length);
+                    document.getElementById('userName').textContent = 'user name: '+username;
+                    document.getElementById('TotalMessageSent').textContent = 'Total number of messages sent : '+messages_sent.length;
+                    document.getElementById('TotalMessageRecieve').textContent = 'Total number of messages recieved : '+messages_recieve.length;
+                    document.getElementById('lol_sent').textContent = 'Total number of lol sent : '+lol_sent.length;
+                    document.getElementById('lmao_sent').textContent = 'Total number of lmao_sent sent : '+lmao_sent.length;
+                    document.getElementById('emoji_sent').textContent = 'Total number of emoji sent : '+emoji_sent.length;
+                    document.getElementById('fuck_merde_putain_ass_sent').textContent = 'Total number of profanities  sent : '+fuck_merde_putain_ass_sent.length;
+                    document.getElementById('emojy_recieve').textContent = 'Total number of emoji recieved : '+emoji_recieve.length;
+                    document.getElementById('angry_emoji_recieve').textContent = 'Total number of angry emoji recieved : '+angry_emoji_recieve.length;
+                    document.getElementById('total_recieve_akpe_mane_..._').textContent = 'Total number of times the user sent and recieved the words "amen", "akpe", "merci", "nagode", "imela", "thanks", "thank you", "alhamdulillah", "shukran" : '+amen_akpe_merci.length;
+                })
+            };
+            fr.readAsText(this.files[0]);
+        });
+
+       function getUserName(str) {
+          return  str.split("avec")[1].replace(".txt","");
+       }
+
+       function  findStringInLine(str,tosearch) {
+           return  str.split("-")[1].split(":")[1].toLowerCase().includes(tosearch)
+       }
+
+
+
+         function processMessages(lines ,showElement) {
+
+              for(let i=0; i <= lines.length; i++) {
+                  if( lines[i] &&  lines[i].split("-").length >= 2 ) {
+
+                      if (lines[i].split("-")[1].split(":").length >=2) {
+                          //all messages
+                          if(findStringInLine(lines[i],"amen") || findStringInLine(lines[i],"merci") || findStringInLine(lines[i],"nagode") || findStringInLine(lines[i],"imela") ||findStringInLine(lines[i],"thanks") || findStringInLine(lines[i],"thank you") || findStringInLine(lines[i],"alhamdulillah") || findStringInLine(lines[i],"shukran")){
+                              amen_akpe_merci.push(lines[i])
+                          }
+                          messages.push(lines[i]);
+                         if(lines[i].split("-")[1].split(":")[0] && lines[i].split("-")[1].split(":")[0].replace(/\s/g, '').toLowerCase() === username.replace(/\s/g, '').toLowerCase()) {
+                          // message recieved here;
+                           if (lines[i].match(emojiRegex)) {
+                              //console.log('emoji here recieved '+ lines[i])
+                             emoji_recieve.push(lines[i]);
+                           }
+
+                           if(lines[i].split("-")[1].split(":")[1].replace(/\s/g, '').toLowerCase().includes("\ud83d\ude21")) {
+                               //angry moji here
+                              angry_emoji_recieve.push(lines[i]);
+                           }
+                          messages_recieve.push(lines[i])
+                      } else {
+                          //messages sent here
+                          messages_sent.push(lines[i]);
+                          if(findStringInLine(lines[i],"lol")) {
+                              //lol sent here
+                               lol_sent.push(lines[i])
+                          }
+
+                          if (lines[i].match(emojiRegex)) {
+                              //all moji sent here
+                              emoji_sent.push(lines[i]);
+                          }
+
+                          if(findStringInLine(lines[i],"lmao")) {
+                              //lmao sent here
+                              lmao_sent.push(lines[i])
+                          }
+
+                          if ( findStringInLine(lines[i],"fuck") || findStringInLine(lines[i],"merde") || findStringInLine(lines[i],"putain") || findStringInLine(lines[i],"ass"))  {
+                              //
+                              fuck_merde_putain_ass_sent.push(lines[i])
+                          }
+                       }
+                     }
+                    }
+                  }
+             showElement();
+            }
+
+            function init() {
+                 messages = [];
+                 messages_sent = [];
+                 messages_recieve = [];
+                 username   = [];
+                 lol_sent   = [];
+                 lmao_sent  =[];
+                 emoji_sent = [];
+                 fuck_merde_putain_ass_sent = [] ;
+                 emoji_recieve = [];
+                 angry_emoji_recieve = [];
+                amen_akpe_merci = [];
+                 emojiRegex =  /([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g;
+            }
+
+
+</script>
+</body>
+
+</html>
